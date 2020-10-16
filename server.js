@@ -1,7 +1,7 @@
 var fs = require("fs");
 var express = require("express");
 var path = require("path");
-var uuidv1 = require("uuid/v1");
+const { v4: uuidv4 } = require('uuid');
 //--------------------------------
 // variables 
 var app = express();
@@ -25,7 +25,7 @@ app.get("/notes", function (req, res) {
 });
 
 app.get("/api/notes", function (req, res) {
-  fs.readFile("db/db.json", "utf8", function (err, data) {
+  fs.readFile("db.json", "utf8", function (err, data) {
 
     console.log(data);
 
@@ -39,11 +39,11 @@ app.post("/api/notes", function (req, res) {
   //newNote = res.body
   var title = req.body.title;
   var text = req.body.text;
-  var newNote = { title, text, id: uuidv1() }
-  var pastNotes = JSON.parse(fs.readFileSync("db/db.json", "utf8"));
+  var newNote = { title, text, id: uuidv4() }
+  var pastNotes = JSON.parse(fs.readFileSync("db.json", "utf8"));
   pastNotes.push(newNote)
 
-  fs.writeFileSync("db/db.json", JSON.stringify(pastNotes));
+  fs.writeFileSync("db.json", JSON.stringify(pastNotes));
 
   res.json(newNote);
 
@@ -51,11 +51,11 @@ app.post("/api/notes", function (req, res) {
 
 
 app.delete("/api/notes/:id", function (req, res) {
-  var pastNotes = JSON.parse(fs.readFileSync("db/db.json", "utf8"));
+  var pastNotes = JSON.parse(fs.readFileSync("db.json", "utf8"));
   var updateNotes = pastNotes.filter(function(note){
     return note.id !== req.params.id
   })
-  fs.writeFileSync("db/db.json", JSON.stringify(updateNotes));
+  fs.writeFileSync("db.json", JSON.stringify(updateNotes));
   res.json({ok: true})
 })
 
